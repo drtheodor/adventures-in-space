@@ -64,7 +64,7 @@ public abstract class ExteriorBlockEntityMixin extends BlockEntity implements Ox
 
     @Override
     public void ais$fillOxygen() {
-        Set<BlockPos> positions = AISMod.blocksInRadius(this.getBlockPos(), 2);
+        Set<BlockPos> positions = AISMod.blocksInRadius(this.getBlockPos(), 3);
 
         OxygenApi.API.setOxygen(level, positions, true);
         TemperatureApi.API.setTemperature(level, positions, PlanetConstants.COMFY_EARTH_TEMPERATURE); // TODO: move to Temperature Regulator machine
