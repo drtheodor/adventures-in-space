@@ -3,7 +3,7 @@
   "id": "ais",
   "version": "${version}",
   "name": "Adventures in Space (AIT + Ad Astra)",
-  "description": "",
+  "description": "Addon for AIT which adds special compatibility when playing with Ad Astra! ",
   "authors": [
     "Coding: DrTheo_",
     "Testing:\n",
