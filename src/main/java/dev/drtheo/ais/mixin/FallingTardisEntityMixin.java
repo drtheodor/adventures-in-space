@@ -39,6 +39,9 @@ public abstract class FallingTardisEntityMixin {
         if (planet == null)
             return;
 
+        BlockPos spacePos = entity.getOnPos();
+        ForcedChunkUtil.keepChunkLoaded(serverLevel, spacePos); // force load space
+
         planet.getOrbitPlanet().ifPresent(targetLevelKey -> {
             MinecraftServer server = serverLevel.getServer();
             ServerLevel targetLevel = server.getLevel(targetLevelKey);
@@ -53,10 +56,11 @@ public abstract class FallingTardisEntityMixin {
                     pos, targetLevel, pos.getRotation()
             ));
 
-            ForcedChunkUtil.keepChunkLoaded(targetLevel, travel.getPosition());
-
             List<Entity> passengers = entity.getPassengers();
             entity.setPos(entity.getX(), AdAstraConfig.atmosphereLeave, entity.getZ());
+
+            ForcedChunkUtil.keepChunkLoaded(targetLevel, entity.getOnPos()); // forceload planet
+            ForcedChunkUtil.stopForceLoading(serverLevel, spacePos); // un-forceload space
 
             Entity teleportedEntity = ModUtils.teleportToDimension(entity, targetLevel);
             teleportedEntity.setNoGravity(false);
