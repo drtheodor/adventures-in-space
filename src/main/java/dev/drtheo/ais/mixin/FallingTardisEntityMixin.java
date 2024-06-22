@@ -8,6 +8,7 @@ import loqor.ait.core.data.AbsoluteBlockPos;
 import loqor.ait.core.entities.FallingTardisEntity;
 import loqor.ait.core.util.ForcedChunkUtil;
 import loqor.ait.tardis.Tardis;
+import loqor.ait.tardis.TardisTravel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -42,27 +43,29 @@ public abstract class FallingTardisEntityMixin {
             MinecraftServer server = serverLevel.getServer();
             ServerLevel targetLevel = server.getLevel(targetLevelKey);
 
+            Tardis tardis = entity.getTardis();
+            TardisTravel travel = tardis.travel();
+
+            AbsoluteBlockPos.Directed pos = travel.getPosition();
+
+            travel.setCrashing(true);
+            travel.setPosition(new AbsoluteBlockPos.Directed(
+                    pos, targetLevel, pos.getRotation()
+            ));
+
+            ForcedChunkUtil.keepChunkLoaded(targetLevel, travel.getPosition());
+
             List<Entity> passengers = entity.getPassengers();
             entity.setPos(entity.getX(), AdAstraConfig.atmosphereLeave, entity.getZ());
 
             Entity teleportedEntity = ModUtils.teleportToDimension(entity, targetLevel);
+            teleportedEntity.setNoGravity(false);
 
             for (Entity passenger : passengers) {
                 Entity teleportedPassenger = ModUtils.teleportToDimension(passenger, targetLevel);
                 teleportedPassenger.startRiding(teleportedEntity);
             }
 
-            Tardis tardis = entity.getTardis();
-            AbsoluteBlockPos.Directed pos = tardis.travel().getPosition();
-            BlockPos target = teleportedEntity.getOnPos();
-
-            teleportedEntity.setNoGravity(false);
-
-            tardis.travel().setPosition(new AbsoluteBlockPos.Directed(
-                    target, targetLevel, pos.getRotation()
-            ));
-
-            ForcedChunkUtil.keepChunkLoaded(targetLevel, target);
             ci.cancel();
         });
     }

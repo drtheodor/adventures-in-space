@@ -1,12 +1,11 @@
 package dev.drtheo.ais.mixin;
 
 import loqor.ait.core.blocks.ExteriorBlock;
-import loqor.ait.core.entities.FallingTardisEntity;
 import loqor.ait.core.util.ForcedChunkUtil;
+import loqor.ait.tardis.Tardis;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ExteriorBlockMixin {
 
     @Inject(method = "onLanding", at = @At("TAIL"))
-    public void onLanded(Level world, BlockPos pos, BlockState fallingBlockState, BlockState currentStateInPos, FallingTardisEntity falling, CallbackInfo ci) {
-        ForcedChunkUtil.stopForceLoading((ServerLevel) world, pos);
+    public void onLanded(Tardis tardis, Level world, BlockPos pos, CallbackInfo ci) {
+        if (world instanceof ServerLevel level)
+            ForcedChunkUtil.stopForceLoading(level, pos);
     }
 }
