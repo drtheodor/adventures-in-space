@@ -6,10 +6,14 @@ import earth.terrarium.adastra.api.systems.OxygenApi;
 import earth.terrarium.adastra.api.systems.TemperatureApi;
 import earth.terrarium.adastra.common.config.MachineConfig;
 import earth.terrarium.adastra.common.constants.PlanetConstants;
+import earth.terrarium.botarium.common.energy.base.EnergyContainer;
+import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
+import earth.terrarium.botarium.util.Updatable;
 import loqor.ait.api.tardis.TardisEvents;
 import loqor.ait.core.blockentities.ExteriorBlockEntity;
 import loqor.ait.tardis.Tardis;
 import loqor.ait.tardis.link.v2.AbstractLinkableBlockEntity;
+import loqor.ait.tardis.link.v2.TardisRef;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -27,7 +31,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Mixin(ExteriorBlockEntity.class)
-public abstract class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExterior {
+public abstract class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExterior, EnergyContainer, Updatable<BlockEntity> {
+
+    @Unique
+    private static final long MAX_ENERGY = 5000000;
 
     @Unique private final Set<BlockPos> lastDistributedBlocks = new HashSet<>();
     @Unique private boolean shouldSyncPositions;
@@ -114,10 +121,11 @@ public abstract class ExteriorBlockEntityMixin extends BlockEntity implements Ox
     public @NotNull CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
 
-        if (shouldSyncPositions) {
+        if (this.shouldSyncPositions) {
             tag.putLongArray("LastDistributedBlocks", lastDistributedBlocks.stream()
                     .mapToLong(BlockPos::asLong).toArray());
-            shouldSyncPositions = false;
+
+            this.shouldSyncPositions = false;
         }
 
         return tag;
@@ -125,7 +133,92 @@ public abstract class ExteriorBlockEntityMixin extends BlockEntity implements Ox
 
     @Override
     public void setRemoved() {
-        super.setRemoved();
         this.ais$clearOxygenBlocks();
+        super.setRemoved();
+    }
+
+    @Override
+    public long insertEnergy(long maxAmount, boolean simulate) {
+        long newEnergy = this.getStoredEnergy() + maxAmount;
+
+        if (newEnergy > MAX_ENERGY) {
+            this.setEnergy(MAX_ENERGY);
+            return MAX_ENERGY;
+        }
+
+        this.setEnergy(newEnergy);
+        return newEnergy;
+    }
+
+    @Override
+    public long extractEnergy(long maxAmount, boolean simulate) {
+        long newEnergy = this.getStoredEnergy() - maxAmount;
+
+        if (newEnergy <= 0) {
+            this.setEnergy(0);
+            return 0;
+        }
+
+        this.setEnergy(newEnergy);
+        return newEnergy;
+    }
+
+    @Override
+    public void setEnergy(long energy) {
+        this.ais$tardis().get().fuel().setCurrentFuel(energy);
+    }
+
+    @Override
+    public long getStoredEnergy() {
+        return (long) (this.ais$tardis().get().fuel().getCurrentFuel() * 100);
+    }
+
+    @Override
+    public long getMaxCapacity() {
+        return MAX_ENERGY;
+    }
+
+    @Override
+    public long maxInsert() {
+        return this.ais$tardis().get().isRefueling() ? 1000 : 100;
+    }
+
+    @Override
+    public long maxExtract() {
+        return this.ais$tardis().get().isRefueling() ? 100 : 1000;
+    }
+
+    @Override
+    public boolean allowsInsertion() {
+        return true;
+    }
+
+    @Override
+    public boolean allowsExtraction() {
+        return true;
+    }
+
+    @Override
+    public EnergySnapshot createSnapshot() {
+        return null;
+    }
+
+    @Override
+    public void deserialize(CompoundTag nbt) { }
+
+    @Override
+    public CompoundTag serialize(CompoundTag nbt) {
+        return nbt;
+    }
+
+    @Override
+    public void update(BlockEntity object) { }
+
+    @Override
+    public void clearContent() { }
+
+    @Unique
+    private TardisRef ais$tardis() {
+        return ((AbstractLinkableBlockEntity) (Object) this).tardis();
     }
 }

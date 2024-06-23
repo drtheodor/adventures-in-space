@@ -60,7 +60,6 @@ public abstract class FallingTardisEntityMixin {
             entity.setPos(entity.getX(), AdAstraConfig.atmosphereLeave, entity.getZ());
 
             ForcedChunkUtil.keepChunkLoaded(targetLevel, entity.getOnPos()); // forceload planet
-            ForcedChunkUtil.stopForceLoading(serverLevel, spacePos); // un-forceload space
 
             Entity teleportedEntity = ModUtils.teleportToDimension(entity, targetLevel);
             teleportedEntity.setNoGravity(false);
@@ -70,6 +69,7 @@ public abstract class FallingTardisEntityMixin {
                 teleportedPassenger.startRiding(teleportedEntity);
             }
 
+            ForcedChunkUtil.stopForceLoading(serverLevel, spacePos); // un-forceload space
             ci.cancel();
         });
     }

@@ -44,11 +44,11 @@ jobs:
       with:
         url: ${{ secrets.WEBHOOK_URL }}
         file: 'build/libs/*'
-        username: george washington
-        avatar: 'https://i.imgur.com/uiFqrQh.png'
+        username: wheatley
+        avatar: 'https://static.wikia.nocookie.net/half-life/images/0/0d/Wheatley_model_damaged_p2.png/revision/latest?cb=20240222050216&path-prefix=en'
         commit: '> :sparkles: [%MESSAGE%](<%LINK%>) by [%AUTHOR%](<%AUTHOR_LINK%>)'
         message: |
-          <:new1:1253371736510959636><:new2:1253371805734015006> New dev build:
+          <:new1:1253371736510959636><:new2:1253371805734015006> New `Adventures in Space` dev build `#${{ github.run_number }}`:
           %COMMITS%
     - name: Publish artifacts
       uses: actions/upload-artifact@v3
