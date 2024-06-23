@@ -44,8 +44,8 @@ jobs:
       with:
         url: ${{ secrets.WEBHOOK_URL }}
         file: 'build/libs/*'
-        username: wheatley
-        avatar: 'https://static.wikia.nocookie.net/half-life/images/0/0d/Wheatley_model_damaged_p2.png/revision/latest?cb=20240222050216&path-prefix=en'
+        username: space core
+        avatar: 'https://www.giantbomb.com/a/uploads/original/12/129481/1781737-spacecore.jpg'
         commit: '> :sparkles: [%MESSAGE%](<%LINK%>) by [%AUTHOR%](<%AUTHOR_LINK%>)'
         message: |
           <:new1:1253371736510959636><:new2:1253371805734015006> New `Adventures in Space` dev build `#${{ github.run_number }}`:
