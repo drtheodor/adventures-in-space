@@ -166,7 +166,7 @@ public abstract class ExteriorBlockEntityMixin extends BlockEntity implements Ox
 
     @Override
     public void setEnergy(long energy) {
-        this.ais$tardis().get().fuel().setCurrentFuel(energy);
+        this.ais$tardis().get().fuel().setCurrentFuel((double) energy / 100);
     }
 
     @Override
