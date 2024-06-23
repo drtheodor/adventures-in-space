@@ -8,6 +8,7 @@ import earth.terrarium.adastra.common.config.MachineConfig;
 import earth.terrarium.adastra.common.constants.PlanetConstants;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
+import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
 import earth.terrarium.botarium.util.Updatable;
 import loqor.ait.api.tardis.TardisEvents;
 import loqor.ait.core.blockentities.ExteriorBlockEntity;
@@ -200,7 +201,7 @@ public abstract class ExteriorBlockEntityMixin extends BlockEntity implements Ox
 
     @Override
     public EnergySnapshot createSnapshot() {
-        return null;
+        return new SimpleEnergySnapshot(this);
     }
 
     @Override
