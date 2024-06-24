@@ -4,6 +4,8 @@
   "package": "dev.drtheo.ais.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ConsoleBlockEntityMixin",
+    "DoorBlockEntityMixin",
     "ExteriorBlockEntityMixin",
     "ExteriorBlockMixin",
     "FallingTardisEntityMixin"

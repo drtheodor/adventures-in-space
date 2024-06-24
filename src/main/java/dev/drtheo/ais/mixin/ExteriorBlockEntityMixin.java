@@ -1,19 +1,22 @@
 package dev.drtheo.ais.mixin;
 
 import dev.drtheo.ais.AISMod;
-import dev.drtheo.ais.energy.TardisEnergyContainer;
 import dev.drtheo.ais.mixininterface.OxygenExterior;
 import earth.terrarium.adastra.api.systems.OxygenApi;
 import earth.terrarium.adastra.api.systems.TemperatureApi;
 import earth.terrarium.adastra.common.config.MachineConfig;
 import earth.terrarium.adastra.common.constants.PlanetConstants;
+import earth.terrarium.botarium.common.energy.EnergyApi;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
+import earth.terrarium.botarium.common.energy.base.EnergyContainer;
+import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import loqor.ait.api.tardis.TardisEvents;
+import loqor.ait.core.blockentities.DoorBlockEntity;
 import loqor.ait.core.blockentities.ExteriorBlockEntity;
 import loqor.ait.tardis.Tardis;
 import loqor.ait.tardis.link.v2.AbstractLinkableBlockEntity;
-import loqor.ait.tardis.link.v2.TardisRef;
+import loqor.ait.tardis.util.TardisUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -36,7 +39,7 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
     @Unique private final Set<BlockPos> lastDistributedBlocks = new HashSet<>();
     @Unique private boolean shouldSyncPositions;
 
-    @Unique protected WrappedBlockEnergyContainer energyContainer;
+    @Unique protected WrappedBlockEnergyContainer container;
 
     public ExteriorBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
@@ -103,6 +106,13 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
         }
 
         this.ais$fillOxygen();
+
+        DoorBlockEntity door = (DoorBlockEntity) TardisUtil.getTardisDimension().getBlockEntity(
+                tardis.getDesktop().doorPos().getPos()
+        );
+
+        EnergyContainer energy = this.getEnergyStorage();
+        EnergyApi.moveEnergy(this, door, energy.maxExtract(), false);
     }
 
     @Inject(method = "load", at = @At("TAIL"))
@@ -138,17 +148,12 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        if (energyContainer != null)
-            return energyContainer;
+        if (container != null)
+            return container;
 
-        return energyContainer = new WrappedBlockEnergyContainer(
-                this, new TardisEnergyContainer(
-                        this.ais$tardis(), 1000, 1000
+        return container = new WrappedBlockEnergyContainer(
+                this, new SimpleEnergyContainer(
+                10000, 750, 500
         ));
-    }
-
-    @Unique
-    private TardisRef ais$tardis() {
-        return ((AbstractLinkableBlockEntity) (Object) this).tardis();
     }
 }
