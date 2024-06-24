@@ -8,11 +8,9 @@ import loqor.ait.core.blockentities.ExteriorBlockEntity;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class AISMod implements ModInitializer {
 
