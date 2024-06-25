@@ -11,6 +11,19 @@ public class RefuelingTardisEnergyContainer extends TardisEnergyContainer {
     }
 
     @Override
+    public long maxInsert() {
+        return this.allowsInsertion() ? super.maxInsert() : 0;
+    }
+
+    @Override
+    public long insertEnergy(long maxAmount, boolean simulate) {
+        if (!this.allowsInsertion())
+            return 0;
+
+        return super.insertEnergy(maxAmount, simulate);
+    }
+
+    @Override
     public boolean allowsInsertion() {
         return this.tardis().fuel().isRefueling();
     }
