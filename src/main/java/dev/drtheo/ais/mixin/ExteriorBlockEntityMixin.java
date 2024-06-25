@@ -1,19 +1,15 @@
 package dev.drtheo.ais.mixin;
 
 import dev.drtheo.ais.AISMod;
-import dev.drtheo.ais.energy.RefuelingTardisEnergyContainer;
 import dev.drtheo.ais.mixininterface.OxygenExterior;
 import earth.terrarium.adastra.api.systems.OxygenApi;
 import earth.terrarium.adastra.api.systems.TemperatureApi;
 import earth.terrarium.adastra.common.config.MachineConfig;
 import earth.terrarium.adastra.common.constants.PlanetConstants;
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import loqor.ait.api.tardis.TardisEvents;
 import loqor.ait.core.blockentities.ExteriorBlockEntity;
 import loqor.ait.tardis.Tardis;
 import loqor.ait.tardis.link.v2.AbstractLinkableBlockEntity;
-import loqor.ait.tardis.link.v2.TardisRef;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -31,12 +27,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Mixin(ExteriorBlockEntity.class)
-public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExterior, BotariumEnergyBlock<WrappedBlockEnergyContainer> {
+public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExterior {
 
     @Unique private final Set<BlockPos> lastDistributedBlocks = new HashSet<>();
     @Unique private boolean shouldSyncPositions;
-
-    @Unique protected WrappedBlockEnergyContainer container;
 
     public ExteriorBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
@@ -135,21 +129,5 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
     public void setRemoved() {
         this.ais$clearOxygenBlocks();
         super.setRemoved();
-    }
-
-    @Override
-    public WrappedBlockEnergyContainer getEnergyStorage() {
-        if (container != null)
-            return container;
-
-        return container = new WrappedBlockEnergyContainer(
-                this, new RefuelingTardisEnergyContainer(
-                this::ais$tardis, 750, 500
-        ));
-    }
-
-    @Unique
-    private TardisRef ais$tardis() {
-        return ((AbstractLinkableBlockEntity) (Object) this).tardis();
     }
 }
