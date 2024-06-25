@@ -1,6 +1,5 @@
 package dev.drtheo.ais.energy;
 
-import earth.terrarium.botarium.Botarium;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
 import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
@@ -15,10 +14,6 @@ public class TardisEnergyContainer implements EnergyContainer {
 
     private final long maxInsert;
     private final long maxExtract;
-
-    public TardisEnergyContainer(TardisRef ref) {
-        this(ref, 1024, 1024);
-    }
 
     public TardisEnergyContainer(TardisRef ref, long maxExtract, long maxInsert) {
         this.maxExtract = maxExtract;
@@ -106,18 +101,12 @@ public class TardisEnergyContainer implements EnergyContainer {
 
     @Override
     public CompoundTag serialize(CompoundTag root) {
-        CompoundTag tag = root.getCompound(Botarium.BOTARIUM_DATA);
-        tag.putUUID("tardis", this.ref.getId());
-
-        root.put(Botarium.BOTARIUM_DATA, tag);
         return root;
     }
 
     @Override
     public void deserialize(CompoundTag root) {
-        CompoundTag tag = root.getCompound(Botarium.BOTARIUM_DATA);
-
-        this.ref = new TardisRef(tag.getUUID("tardis"),
+        this.ref = new TardisRef(root.getUUID("tardis"),
                 uuid -> ServerTardisManager.getInstance().demandTardis(null, uuid));
     }
 
