@@ -14,4 +14,9 @@ public class RefuelingTardisEnergyContainer extends TardisEnergyContainer {
     public boolean allowsInsertion() {
         return this.tardis().fuel().isRefueling();
     }
+
+    @Override
+    public boolean allowsExtraction() {
+        return !this.tardis().fuel().isRefueling();
+    }
 }
