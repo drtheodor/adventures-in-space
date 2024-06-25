@@ -1,21 +1,24 @@
 package dev.drtheo.ais.energy;
 
+import dev.drtheo.ais.util.EnergyUtil;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
 import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
+import loqor.ait.tardis.Tardis;
 import loqor.ait.tardis.link.v2.TardisRef;
-import loqor.ait.tardis.wrapper.server.manager.ServerTardisManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 
+import java.util.function.Supplier;
+
 public class TardisEnergyContainer implements EnergyContainer {
 
-    private TardisRef ref;
+    private final Supplier<TardisRef> ref;
 
     private final long maxInsert;
     private final long maxExtract;
 
-    public TardisEnergyContainer(TardisRef ref, long maxExtract, long maxInsert) {
+    public TardisEnergyContainer(Supplier<TardisRef> ref, long maxExtract, long maxInsert) {
         this.maxExtract = maxExtract;
         this.maxInsert = maxInsert;
 
@@ -76,17 +79,17 @@ public class TardisEnergyContainer implements EnergyContainer {
 
     @Override
     public void setEnergy(long energy) {
-        this.ref.get().fuel().setCurrentFuel((double) energy / 100);
+        this.tardis().fuel().setCurrentFuel(EnergyUtil.toArtron(energy));
     }
 
     @Override
     public long getStoredEnergy() {
-        return (long) (ref.get().fuel().getCurrentFuel() * 100);
+        return EnergyUtil.toBotarium(this.tardis().fuel().getCurrentFuel());
     }
 
     @Override
     public long getMaxCapacity() {
-        return /*(long) (ref.get().fuel().getMaxFuel() * 100)*/ 50000_00;
+        return EnergyUtil.toBotarium(50_000);
     }
 
     @Override
@@ -97,17 +100,6 @@ public class TardisEnergyContainer implements EnergyContainer {
     @Override
     public long maxExtract() {
         return maxExtract;
-    }
-
-    @Override
-    public CompoundTag serialize(CompoundTag root) {
-        return root;
-    }
-
-    @Override
-    public void deserialize(CompoundTag root) {
-        this.ref = new TardisRef(root.getUUID("tardis"),
-                uuid -> ServerTardisManager.getInstance().demandTardis(null, uuid));
     }
 
     @Override
@@ -127,4 +119,16 @@ public class TardisEnergyContainer implements EnergyContainer {
 
     @Override
     public void clearContent() { }
+
+    @Override
+    public void deserialize(CompoundTag nbt) { }
+
+    @Override
+    public CompoundTag serialize(CompoundTag nbt) {
+        return nbt;
+    }
+
+    protected Tardis tardis() {
+        return this.ref.get().get();
+    }
 }

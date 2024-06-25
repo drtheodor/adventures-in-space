@@ -29,9 +29,8 @@ public abstract class ConsoleBlockEntityMixin extends BlockEntity implements Bot
 
         return container = new WrappedBlockEnergyContainer(
                 this, new TardisEnergyContainer(
-                    this.ais$tardis(), 1000, 1000
-                )
-        );
+                this::ais$tardis, 1000, 1000
+        ));
     }
 
     @Unique

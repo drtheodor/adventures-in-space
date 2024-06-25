@@ -1,22 +1,19 @@
 package dev.drtheo.ais.mixin;
 
 import dev.drtheo.ais.AISMod;
+import dev.drtheo.ais.energy.RefuelingTardisEnergyContainer;
 import dev.drtheo.ais.mixininterface.OxygenExterior;
 import earth.terrarium.adastra.api.systems.OxygenApi;
 import earth.terrarium.adastra.api.systems.TemperatureApi;
 import earth.terrarium.adastra.common.config.MachineConfig;
 import earth.terrarium.adastra.common.constants.PlanetConstants;
-import earth.terrarium.botarium.common.energy.EnergyApi;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.base.EnergyContainer;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import loqor.ait.api.tardis.TardisEvents;
-import loqor.ait.core.blockentities.DoorBlockEntity;
 import loqor.ait.core.blockentities.ExteriorBlockEntity;
 import loqor.ait.tardis.Tardis;
 import loqor.ait.tardis.link.v2.AbstractLinkableBlockEntity;
-import loqor.ait.tardis.util.TardisUtil;
+import loqor.ait.tardis.link.v2.TardisRef;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -92,6 +89,7 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
         if (world.isClientSide())
             return;
 
+        //noinspection DataFlowIssue
         if (world.getServer().getTickCount() % MachineConfig.distributionRefreshRate != 0)
             return;
 
@@ -106,13 +104,6 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
         }
 
         this.ais$fillOxygen();
-
-        DoorBlockEntity door = (DoorBlockEntity) TardisUtil.getTardisDimension().getBlockEntity(
-                tardis.getDesktop().doorPos().getPos()
-        );
-
-        EnergyContainer energy = this.getEnergyStorage();
-        EnergyApi.moveEnergy(this, door, energy.maxExtract(), false);
     }
 
     @Inject(method = "load", at = @At("TAIL"))
@@ -152,8 +143,13 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
             return container;
 
         return container = new WrappedBlockEnergyContainer(
-                this, new SimpleEnergyContainer(
-                10000, 750, 500
+                this, new RefuelingTardisEnergyContainer(
+                this::ais$tardis, 750, 500
         ));
+    }
+
+    @Unique
+    private TardisRef ais$tardis() {
+        return ((AbstractLinkableBlockEntity) (Object) this).tardis();
     }
 }
