@@ -16,6 +16,11 @@ public class RefuelingTardisEnergyContainer extends TardisEnergyContainer {
     }
 
     @Override
+    public long maxExtract() {
+        return this.allowsExtraction() ? super.maxExtract() : 0;
+    }
+
+    @Override
     public long insertEnergy(long maxAmount, boolean simulate) {
         if (!this.allowsInsertion())
             return 0;
@@ -24,7 +29,20 @@ public class RefuelingTardisEnergyContainer extends TardisEnergyContainer {
     }
 
     @Override
+    public long extractEnergy(long maxAmount, boolean simulate) {
+        if (!this.allowsExtraction())
+            return 0;
+
+        return super.extractEnergy(maxAmount, simulate);
+    }
+
+    @Override
     public boolean allowsInsertion() {
         return this.tardis().fuel().isRefueling();
+    }
+
+    @Override
+    public boolean allowsExtraction() {
+        return !super.allowsExtraction();
     }
 }
