@@ -4,11 +4,11 @@ import earth.terrarium.adastra.api.planets.Planet;
 import earth.terrarium.adastra.api.planets.PlanetApi;
 import earth.terrarium.adastra.common.config.AdAstraConfig;
 import earth.terrarium.adastra.common.utils.ModUtils;
-import loqor.ait.core.data.AbsoluteBlockPos;
 import loqor.ait.core.entities.FallingTardisEntity;
 import loqor.ait.core.util.ForcedChunkUtil;
 import loqor.ait.tardis.Tardis;
-import loqor.ait.tardis.travel.TardisTravel;
+import loqor.ait.tardis.data.travel.TardisTravel;
+import loqor.ait.core.data.DirectedGlobalPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -49,12 +49,10 @@ public abstract class FallingTardisEntityMixin {
             Tardis tardis = entity.getTardis();
             TardisTravel travel = tardis.travel();
 
-            AbsoluteBlockPos.Directed pos = travel.getPosition();
+            DirectedGlobalPos.Cached pos = travel.getPosition();
 
             travel.setCrashing(true);
-            travel.setPosition(new AbsoluteBlockPos.Directed(
-                    pos, targetLevel, pos.getRotation()
-            ));
+            travel.setPosition(pos.world(targetLevel));
 
             List<Entity> passengers = entity.getPassengers();
             entity.setPos(entity.getX(), AdAstraConfig.atmosphereLeave, entity.getZ());
