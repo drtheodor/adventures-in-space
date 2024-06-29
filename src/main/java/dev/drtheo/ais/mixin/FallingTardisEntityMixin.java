@@ -8,7 +8,7 @@ import loqor.ait.core.data.AbsoluteBlockPos;
 import loqor.ait.core.entities.FallingTardisEntity;
 import loqor.ait.core.util.ForcedChunkUtil;
 import loqor.ait.tardis.Tardis;
-import loqor.ait.tardis.TardisTravel;
+import loqor.ait.tardis.travel.TardisTravel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
