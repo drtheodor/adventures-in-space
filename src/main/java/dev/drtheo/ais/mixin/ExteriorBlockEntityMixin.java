@@ -10,6 +10,7 @@ import loqor.ait.api.tardis.TardisEvents;
 import loqor.ait.core.blockentities.ExteriorBlockEntity;
 import loqor.ait.tardis.Tardis;
 import loqor.ait.tardis.link.v2.AbstractLinkableBlockEntity;
+import loqor.ait.core.data.DirectedGlobalPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -38,7 +39,8 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
 
     static {
         TardisEvents.TOGGLE_SHIELDS.register((tardis, active, visuals) -> {
-            if (!(tardis.travel().getPosition().getBlockEntity() instanceof OxygenExterior exterior))
+            DirectedGlobalPos.Cached globalPos = tardis.travel().position();
+            if (!(globalPos.getWorld().getBlockEntity(globalPos.getPos()) instanceof OxygenExterior exterior))
                 return;
 
             if (active) exterior.ais$fillOxygen();

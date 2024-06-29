@@ -49,10 +49,10 @@ public abstract class FallingTardisEntityMixin {
             Tardis tardis = entity.getTardis();
             TravelHandler travel = tardis.travel();
 
-            DirectedGlobalPos.Cached pos = travel.getPosition();
+            DirectedGlobalPos.Cached pos = travel.position();
 
             travel.setCrashing(true);
-            travel.setPosition(pos.world(targetLevel));
+            travel.forcePosition(pos.world(targetLevel));
 
             List<Entity> passengers = entity.getPassengers();
             entity.setPos(entity.getX(), AdAstraConfig.atmosphereLeave, entity.getZ());
