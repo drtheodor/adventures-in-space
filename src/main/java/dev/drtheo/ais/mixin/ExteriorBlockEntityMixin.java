@@ -102,7 +102,7 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
         this.ais$fillOxygen();
     }
 
-    @Inject(method = "load", at = @At("TAIL"))
+    @Inject(method = "Lnet/minecraft/block/entity/BlockEntity;readNbt(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))
     public void load(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains("LastDistributedBlocks")) {
             lastDistributedBlocks.clear();
