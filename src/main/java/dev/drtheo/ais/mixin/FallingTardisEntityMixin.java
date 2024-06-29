@@ -7,7 +7,7 @@ import earth.terrarium.adastra.common.utils.ModUtils;
 import loqor.ait.core.entities.FallingTardisEntity;
 import loqor.ait.core.util.ForcedChunkUtil;
 import loqor.ait.tardis.Tardis;
-import loqor.ait.tardis.data.travel.TardisTravel;
+import loqor.ait.tardis.data.travel.TravelHandler;
 import loqor.ait.core.data.DirectedGlobalPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -47,7 +47,7 @@ public abstract class FallingTardisEntityMixin {
             ServerLevel targetLevel = server.getLevel(targetLevelKey);
 
             Tardis tardis = entity.getTardis();
-            TardisTravel travel = tardis.travel();
+            TravelHandler travel = tardis.travel();
 
             DirectedGlobalPos.Cached pos = travel.getPosition();
 
