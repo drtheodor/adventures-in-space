@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Mixin(ExteriorBlockEntity.class)
-public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExterior {
+public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implements OxygenExterior {
 
     @Unique private final Set<BlockPos> lastDistributedBlocks = new HashSet<>();
     @Unique private boolean shouldSyncPositions;
@@ -102,8 +102,10 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
         this.ais$fillOxygen();
     }
 
-    @Inject(method = "Lnet/minecraft/world/level/block/entity/BlockEntity;load(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
-    public void load(CompoundTag tag, CallbackInfo ci) {
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+
         if (tag.contains("LastDistributedBlocks")) {
             lastDistributedBlocks.clear();
 
