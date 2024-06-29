@@ -39,7 +39,7 @@ public class ExteriorBlockEntityMixin extends BlockEntity implements OxygenExter
 
     static {
         TardisEvents.TOGGLE_SHIELDS.register((tardis, active, visuals) -> {
-            DirectedGlobalPos.Cached globalPos = tardis.travel().position();
+            DirectedGlobalPos.Cached globalPos = tardis.travel2().position();
             if (!(globalPos.getWorld().getBlockEntity(globalPos.getPos()) instanceof OxygenExterior exterior))
                 return;
 

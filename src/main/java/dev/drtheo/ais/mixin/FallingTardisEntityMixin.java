@@ -47,7 +47,7 @@ public abstract class FallingTardisEntityMixin {
             ServerLevel targetLevel = server.getLevel(targetLevelKey);
 
             Tardis tardis = entity.getTardis();
-            TravelHandler travel = tardis.travel();
+            TravelHandler travel = tardis.travel2();
 
             DirectedGlobalPos.Cached pos = travel.position();
 
