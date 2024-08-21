@@ -9,12 +9,11 @@ import earth.terrarium.adastra.common.constants.PlanetConstants;
 import loqor.ait.api.tardis.TardisEvents;
 import loqor.ait.core.blockentities.ExteriorBlockEntity;
 import loqor.ait.tardis.Tardis;
-import loqor.ait.tardis.link.v2.AbstractLinkableBlockEntity;
 import loqor.ait.core.data.DirectedGlobalPos;
+import loqor.ait.tardis.link.v2.block.AbstractLinkableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,7 @@ public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implem
 
     static {
         TardisEvents.TOGGLE_SHIELDS.register((tardis, active, visuals) -> {
-            DirectedGlobalPos.Cached globalPos = tardis.travel2().position();
+            DirectedGlobalPos.Cached globalPos = tardis.travel().position();
             if (!(globalPos.getWorld().getBlockEntity(globalPos.getPos()) instanceof OxygenExterior exterior))
                 return;
 
@@ -89,7 +88,7 @@ public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implem
         if (world.getServer().getTickCount() % MachineConfig.distributionRefreshRate != 0)
             return;
 
-        Tardis tardis = ((AbstractLinkableBlockEntity) (Object) this).tardis().get();
+        Tardis tardis = this.tardis().get();
 
         if (tardis == null)
             return;

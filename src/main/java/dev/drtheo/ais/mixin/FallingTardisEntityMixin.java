@@ -28,6 +28,11 @@ public abstract class FallingTardisEntityMixin {
         FallingTardisEntity entity = ((FallingTardisEntity) (Object) this);
         entity.setNoGravity(true);
 
+        if (entity.tardis().isEmpty())
+            return;
+
+        Tardis tardis = entity.tardis().get();
+
         if (!(entity.level() instanceof ServerLevel serverLevel))
             return;
 
@@ -46,13 +51,11 @@ public abstract class FallingTardisEntityMixin {
             MinecraftServer server = serverLevel.getServer();
             ServerLevel targetLevel = server.getLevel(targetLevelKey);
 
-            Tardis tardis = entity.getTardis();
-            TravelHandler travel = tardis.travel2();
+            if (targetLevel == null)
+                return;
 
+            TravelHandler travel = tardis.travel();
             DirectedGlobalPos.Cached pos = travel.position();
-
-            travel.setCrashing(true);
-            travel.forcePosition(pos.world(targetLevel));
 
             List<Entity> passengers = entity.getPassengers();
             entity.setPos(entity.getX(), AdAstraConfig.atmosphereLeave, entity.getZ());
@@ -66,6 +69,9 @@ public abstract class FallingTardisEntityMixin {
                 Entity teleportedPassenger = ModUtils.teleportToDimension(passenger, targetLevel);
                 teleportedPassenger.startRiding(teleportedEntity);
             }
+
+            travel.setCrashing(true);
+            travel.forcePosition(pos.world(targetLevel));
 
             ForcedChunkUtil.stopForceLoading(serverLevel, spacePos); // un-forceload space
             ci.cancel();
