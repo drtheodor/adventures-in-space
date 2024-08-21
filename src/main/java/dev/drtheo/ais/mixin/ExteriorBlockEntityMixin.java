@@ -68,16 +68,14 @@ public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implem
             return TardisEvents.Interaction.PASS;
         });
 
-        TardisEvents.MAT.register(tardis -> {
+        TardisEvents.LANDED.register(tardis -> {
             OxygenExterior exterior = asExterior(tardis);
 
             if (exterior == null)
-                return TardisEvents.Interaction.PASS;
+                return;
 
             if (tardis.areShieldsActive())
                 exterior.ais$fillOxygen();
-
-            return TardisEvents.Interaction.PASS;
         });
     }
 
