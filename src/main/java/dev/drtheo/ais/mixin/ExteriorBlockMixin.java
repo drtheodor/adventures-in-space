@@ -17,6 +17,6 @@ public class ExteriorBlockMixin {
     @Inject(method = "onLanding", at = @At("TAIL"))
     public void onLanded(Tardis tardis, Level world, BlockPos pos, CallbackInfo ci) {
         if (world instanceof ServerLevel level)
-            ForcedChunkUtil.stopForceLoading(level, pos);
+            ForcedChunkUtil.keepChunkLoaded(level, pos);
     }
 }
