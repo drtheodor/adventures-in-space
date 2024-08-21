@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,14 +37,47 @@ public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implem
         super(blockEntityType, blockPos, blockState);
     }
 
+    @Unique
+    private static @Nullable OxygenExterior asExterior(Tardis tardis) {
+        DirectedGlobalPos.Cached globalPos = tardis.travel().position();
+
+        if (!(globalPos.getWorld().getBlockEntity(globalPos.getPos()) instanceof OxygenExterior exterior))
+            return null;
+
+        return exterior;
+    }
+
     static {
         TardisEvents.TOGGLE_SHIELDS.register((tardis, active, visuals) -> {
-            DirectedGlobalPos.Cached globalPos = tardis.travel().position();
-            if (!(globalPos.getWorld().getBlockEntity(globalPos.getPos()) instanceof OxygenExterior exterior))
+            OxygenExterior exterior = asExterior(tardis);
+
+            if (exterior == null)
                 return;
 
             if (active) exterior.ais$fillOxygen();
             else exterior.ais$clearOxygenBlocks();
+        });
+
+        TardisEvents.DEMAT.register(tardis -> {
+            OxygenExterior exterior = asExterior(tardis);
+
+            if (exterior == null)
+                return TardisEvents.Interaction.PASS;
+
+            exterior.ais$clearOxygenBlocks();
+            return TardisEvents.Interaction.PASS;
+        });
+
+        TardisEvents.MAT.register(tardis -> {
+            OxygenExterior exterior = asExterior(tardis);
+
+            if (exterior == null)
+                return TardisEvents.Interaction.PASS;
+
+            if (tardis.areShieldsActive())
+                exterior.ais$fillOxygen();
+
+            return TardisEvents.Interaction.PASS;
         });
     }
 
