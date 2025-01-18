@@ -43,7 +43,7 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
-    modImplementation "com.github.pavatus:ait:2b414ef1f6"
+    modImplementation "com.github.pavatus:ait:1.1.0.1167-1.20.1-release"
 }
 
 processResources {
