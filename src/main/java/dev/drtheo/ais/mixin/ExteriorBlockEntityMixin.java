@@ -1,16 +1,17 @@
 package dev.drtheo.ais.mixin;
 
+import dev.amble.ait.api.tardis.TardisEvents;
+import dev.amble.ait.api.tardis.link.v2.block.AbstractLinkableBlockEntity;
+import dev.amble.ait.core.blockentities.ExteriorBlockEntity;
+import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.lib.data.CachedDirectedGlobalPos;
 import dev.drtheo.ais.AISMod;
 import dev.drtheo.ais.mixininterface.OxygenExterior;
 import earth.terrarium.adastra.api.systems.OxygenApi;
 import earth.terrarium.adastra.api.systems.TemperatureApi;
 import earth.terrarium.adastra.common.config.MachineConfig;
 import earth.terrarium.adastra.common.constants.PlanetConstants;
-import loqor.ait.api.TardisEvents;
-import loqor.ait.api.link.v2.block.AbstractLinkableBlockEntity;
-import loqor.ait.core.blockentities.ExteriorBlockEntity;
-import loqor.ait.core.tardis.Tardis;
-import loqor.ait.data.DirectedGlobalPos;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -39,7 +40,7 @@ public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implem
 
     @Unique
     private static @Nullable OxygenExterior asExterior(Tardis tardis) {
-        DirectedGlobalPos.Cached globalPos = tardis.travel().position();
+        CachedDirectedGlobalPos globalPos = tardis.travel().position();
 
         if (!(globalPos.getWorld().getBlockEntity(globalPos.getPos()) instanceof OxygenExterior exterior))
             return null;
@@ -111,7 +112,7 @@ public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implem
         positions.removeAll(lastPositionsCopy);
     }
 
-    @Inject(method = "tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lloqor/ait/core/blockentities/ExteriorBlockEntity;)V", at = @At("TAIL"))
+    @Inject(method = "tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Ldev/amble/ait/core/blockentities/ExteriorBlockEntity;)V", at = @At("TAIL"))
     public void tick(Level world, BlockPos pos, BlockState blockState, ExteriorBlockEntity blockEntity, CallbackInfo ci) {
         if (world.isClientSide())
             return;

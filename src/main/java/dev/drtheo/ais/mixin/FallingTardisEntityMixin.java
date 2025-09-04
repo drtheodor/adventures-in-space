@@ -1,23 +1,25 @@
 package dev.drtheo.ais.mixin;
 
+import dev.amble.ait.core.entities.FallingTardisEntity;
+import dev.amble.ait.core.tardis.Tardis;
+import dev.amble.ait.core.tardis.handler.travel.TravelHandler;
+import dev.amble.lib.data.CachedDirectedGlobalPos;
 import earth.terrarium.adastra.api.planets.Planet;
 import earth.terrarium.adastra.api.planets.PlanetApi;
 import earth.terrarium.adastra.common.config.AdAstraConfig;
 import earth.terrarium.adastra.common.utils.ModUtils;
-import loqor.ait.core.entities.FallingTardisEntity;
-import loqor.ait.core.tardis.Tardis;
-import loqor.ait.core.tardis.handler.travel.TravelHandler;
-import loqor.ait.core.util.ForcedChunkUtil;
-import loqor.ait.data.DirectedGlobalPos;
+import net.fabricmc.fabric.impl.client.itemgroup.CreativeGuiExtensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.swing.text.AsyncBoxView;
 import java.util.List;
 
 @Mixin(FallingTardisEntity.class)
@@ -45,7 +47,8 @@ public abstract class FallingTardisEntityMixin {
             return;
 
         BlockPos spacePos = entity.getOnPos();
-        ForcedChunkUtil.keepChunkLoaded(serverLevel, spacePos); // force load space
+        ChunkPos spacechunkPos = new ChunkPos(spacePos);
+        serverLevel.setChunkForced(spacechunkPos.x, spacechunkPos.z, true);// force load space
 
         planet.getOrbitPlanet().ifPresent(targetLevelKey -> {
             MinecraftServer server = serverLevel.getServer();
@@ -55,12 +58,13 @@ public abstract class FallingTardisEntityMixin {
                 return;
 
             TravelHandler travel = tardis.travel();
-            DirectedGlobalPos.Cached pos = travel.position();
+            CachedDirectedGlobalPos pos = travel.position();
 
             List<Entity> passengers = entity.getPassengers();
             entity.setPos(entity.getX(), AdAstraConfig.atmosphereLeave, entity.getZ());
 
-            ForcedChunkUtil.keepChunkLoaded(targetLevel, entity.getOnPos()); // forceload planet
+            ChunkPos planetChunkPos = new ChunkPos(entity.getOnPos());
+            targetLevel.setChunkForced(planetChunkPos.x, planetChunkPos.z, true); // forceload planet
 
             Entity teleportedEntity = ModUtils.teleportToDimension(entity, targetLevel);
             teleportedEntity.setNoGravity(false);
@@ -73,7 +77,7 @@ public abstract class FallingTardisEntityMixin {
             travel.setCrashing(true);
             travel.forcePosition(pos.world(targetLevel));
 
-            ForcedChunkUtil.stopForceLoading(serverLevel, spacePos); // un-forceload space
+            serverLevel.setChunkForced(spacechunkPos.x, spacechunkPos.z, false); // un-forceload space
             ci.cancel();
         });
     }
