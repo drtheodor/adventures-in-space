@@ -5,14 +5,14 @@
   "name": "Adventures in Space (AIT + Ad Astra)",
   "description": "Addon for AIT which adds special compatibility when playing with Ad Astra! ",
   "authors": [
-    "Coding: DrTheo_",
+    "Coding: DrTheo_, Cosmic-Fires",
     "Testing:\n",
     " - idkuhh (Saturn)",
     " - therealbb8fan1",
     " - spartangamezftb"
   ],
   "contact": {
-    "repo": "https://github.com/DrTheodor/adventures-in-stars"
+    "repo": "https://github.com/DrTheodor/adventures-in-space"
   },
   "license": "LGPL-3.0",
   "icon": "assets/ais/icon.png",
