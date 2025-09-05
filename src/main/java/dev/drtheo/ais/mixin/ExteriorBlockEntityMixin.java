@@ -101,7 +101,7 @@ public class ExteriorBlockEntityMixin extends AbstractLinkableBlockEntity implem
         Set<BlockPos> positions = AISMod.blocksInRadius(this.getBlockPos(), 3);
 
         OxygenApi.API.setOxygen(level, positions, true);
-        TemperatureApi.API.setTemperature(level, positions, PlanetConstants.COMFY_EARTH_TEMPERATURE); // TODO: move to Temperature Regulator machine
+        TemperatureApi.API.setTemperature(level, positions, PlanetConstants.COMFY_EARTH_TEMPERATURE);
 
         Set<BlockPos> lastPositionsCopy = new HashSet<>(lastDistributedBlocks);
         this.ais$resetLastDistributedBlocks(positions);
