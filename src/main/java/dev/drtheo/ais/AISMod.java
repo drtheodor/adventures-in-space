@@ -12,18 +12,8 @@ import java.util.Set;
 
 public class AISMod implements ModInitializer {
 
-
     @Override
-    public void onInitialize() {
-        TardisEvents.DEMAT.register(tardis -> {
-            CachedDirectedGlobalPos exteriorPos = tardis.travel().position();
-            if (exteriorPos.getWorld().getBlockEntity(exteriorPos.getPos()) instanceof ExteriorBlockEntity exterior) {
-                ChunkPos dematChunkPos = new ChunkPos(exteriorPos.getPos());
-                exteriorPos.getWorld().setChunkForced(dematChunkPos.x, dematChunkPos.z, false);
-            }
-            return TardisEvents.Interaction.PASS;
-        });
-    }
+    public void onInitialize() { }
 
     public static Set<BlockPos> blocksInRadius(BlockPos start, int radius) {
         Set<BlockPos> pos = new LinkedHashSet<>();
