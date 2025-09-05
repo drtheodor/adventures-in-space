@@ -9,9 +9,7 @@ name: Automated donator builds
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -40,16 +38,15 @@ jobs:
       run: ./gradlew build
 
     - name: Publish artifacts
-      uses: DrTheodor/discord-webhook-upload-action@v1.2
+      uses: DrTheodor/discord-webhook-upload-action@v0.2
       with:
         url: ${{ secrets.WEBHOOK_URL }}
         file: 'build/libs/*'
         username: space core
         avatar: 'https://www.giantbomb.com/a/uploads/original/12/129481/1781737-spacecore.jpg'
-        commit: '> :sparkles: [%MESSAGE%](<%LINK%>) by [%AUTHOR%](<%AUTHOR_LINK%>)'
-        message: |
+        message_commit: '> :sparkles: [${commitMessage}](<${commitUrl}>) by [${authorName}](<${authorUrl}>)'
+        message_header: |
           <:new1:1253371736510959636><:new2:1253371805734015006> New `Adventures in Space` dev build `#${{ github.run_number }}`:
-          %COMMITS%
     - name: Publish artifacts
       uses: actions/upload-artifact@v3
       with:
