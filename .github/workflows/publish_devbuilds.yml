@@ -48,7 +48,7 @@ jobs:
         message_header: |
           <:new1:1253371736510959636><:new2:1253371805734015006> New `Adventures in Space` dev build `#${{ github.run_number }}`:
     - name: Publish artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Package
         path: build/libs
